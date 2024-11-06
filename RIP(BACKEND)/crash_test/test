@@ -1,0 +1,110 @@
+api\task.py
+# @router.post("/create", response_model=GetTask, status_code=status.HTTP_200_OK)
+# async def create(description: str):
+#     return await Task.create(description)
+#
+#
+# @router.get("/get_all", response_model=list[GetTask], status_code=status.HTTP_200_OK)
+# async def get_all():
+#     return await Task.get_all()
+#
+#
+# @router.get("/get/{task_id}", response_model=GetTask, status_code=status.HTTP_200_OK)
+# async def get(task_id: int):
+#     return await Task.get(task_id)
+#
+#
+# @router.put("/update_complete/{task_id}", response_model=GetTask, status_code=status.HTTP_200_OK)
+# async def update_complete(task_id: int, complete: bool):
+#     return await Task.update_complete(task_id, complete)
+#
+#
+# @router.delete("/delete/{task_id}", response_model=Inform, status_code=status.HTTP_200_OK)
+# async def delete(task_id: int):
+#     return await Task.delete(task_id)
+
+
+schemas\task
+# class GetTask(BaseModel):
+#     id: int
+#     description: str
+#     complete: bool
+
+services\task
+# class Task:
+#     @classmethod
+#     async def create(cls, description: str):
+#         async with new_session() as session:
+#             task_field = TaskModel(
+#                 description=description,
+#                 complete=False
+#             )
+#             session.add(task_field)
+#             await session.flush()
+#             await session.commit()
+#             return task_field
+#
+#     @classmethod
+#     async def get(cls, task_id: int):
+#         async with new_session() as session:
+#             query = select(TaskModel).filter_by(id=task_id)
+#             result = await session.execute(query)
+#             task = result.scalars().first()
+#             if task is None:
+#                 raise HTTPException(
+#                     status_code=status.HTTP_404_NOT_FOUND,
+#                     detail="This task does not exist",
+#                 )
+#             return task
+#
+#     @classmethod
+#     async def get_all(cls):
+#         async with new_session() as session:
+#             query = select(TaskModel)
+#             result = await session.execute(query)
+#             tasks = result.scalars().all()
+#             return tasks
+#
+#     @classmethod
+#     async def update_complete(cls, task_id: int, complete: bool):
+#         async with new_session() as session:
+#             query = select(TaskModel).filter_by(id=task_id)
+#             result = await session.execute(query)
+#             task = result.scalars().first()
+#             if task is None:
+#                 raise HTTPException(
+#                     status_code=status.HTTP_404_NOT_FOUND,
+#                     detail="This task does not exist",
+#                 )
+#             task.complete = complete
+#             await session.flush()
+#             await session.commit()
+#             return task
+#
+#     @classmethod
+#     async def delete(cls, task_id: int):
+#         async with new_session() as session:
+#             query = select(TaskModel).filter_by(id=task_id)
+#             result = await session.execute(query)
+#             task = result.scalars().first()
+#             if task is None:
+#                 raise HTTPException(
+#                     status_code=status.HTTP_404_NOT_FOUND,
+#                     detail="This task does not exist",
+#                 )
+#             query = delete(TaskModel).filter_by(id=task_id)
+#             await session.execute(query)
+#             await session.flush()
+#             await session.commit()
+#             return Inform(message="task deleted")
+
+
+schemas\general.py
+from pydantic import BaseModel
+
+
+class Inform(BaseModel):
+    message: str
+
+service\task
+#from schemas import Inform

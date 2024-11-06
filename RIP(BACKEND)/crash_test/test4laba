@@ -1,0 +1,182 @@
+
+#Асинхронность выполнение консольных команд
+# import click
+
+# import asyncio
+# from services import Task
+#
+# @click.group()
+# def default_command():
+#     """Командная группа для управления задачами."""
+#     pass
+#
+# @default_command.command()
+# @click.option('--run-async', is_flag=True, help="Чтобы запустить асинхронно")
+# def get_all_tasks(run_async):
+#     """Вывод всех задач на экран."""
+#     if run_async:
+#         asyncio.run(_get_all_tasks())
+#     else:
+#         click.echo("Используйте флаг --run-async для асинхронного запуска этой команды.")
+#
+# async def _get_all_tasks():
+#     tasks = await Task.get_all()
+#     for task in tasks:
+#         click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+# @default_command.command()
+# @click.argument('task_id', type=int)
+# @click.option('--run-async', is_flag=True, help="Run command asynchronously.")
+# def get_task(task_id, run_async):
+#     """Найти задачу по её id."""
+#     if run_async:
+#         asyncio.run(_get_task(task_id))
+#     else:
+#         click.echo("Используйте флаг --run-async для асинхронного запуска этой команды.")
+#
+# async def _get_task(task_id):
+#     task = await Task.get(task_id)
+#     click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+# @default_command.command()
+# @click.argument('task_name')
+# @click.option('--run-async', is_flag=True, help="Run command asynchronously.")
+# def create_task(task_name, run_async):
+#     """Создать новую задачу."""
+#     if run_async:
+#         asyncio.run(_create_task(task_name))
+#     else:
+#         click.echo("Используйте флаг --run-async для асинхронного запуска этой команды.")
+#
+# async def _create_task(task_name):
+#     task = await Task.create(task_name)  # Вызов метода из класса Task
+#     click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+# @default_command.command()
+# @click.argument('task_id', type=int)
+# @click.option('--run-async', is_flag=True, help="Run command asynchronously.")
+# def complete_task(task_id, run_async):
+#     """Обновить статус задачи."""
+#     if run_async:
+#         asyncio.run(_complete_task(task_id))
+#     else:
+#         click.echo("Используйте флаг --run-async для асинхронного запуска этой команды.")
+#
+# async def _complete_task(task_id):
+#     task = await Task.update_complete(task_id)
+#     click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+# @default_command.command()
+# @click.argument('task_id', type=int)
+# @click.option('--run-async', is_flag=True, help="Run command asynchronously.")
+# def delete_task(task_id, run_async):
+#     """Удалить задачу."""
+#     if run_async:
+#         asyncio.run(_delete_task(task_id))
+#     else:
+#         click.echo("Используйте флаг --run-async для асинхронного запуска этой команды.")
+#
+# async def _delete_task(task_id):
+#     message = await Task.delete(task_id)
+#     click.echo(message)
+#
+# if __name__ == '__main__':
+#     asyncio.run(default_command())
+
+
+#НЕАСИНХРОННОЕ ВЫПОЛНЕНИЕ КОМАНД
+# import click
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import sessionmaker
+# from database import TaskModel
+# from sqlalchemy import select, delete
+#
+#
+#
+# engine = create_engine("sqlite:///./sql_app.db")
+# new_session = sessionmaker(engine, expire_on_commit=False)
+#
+# @click.group()
+# def default_command():
+#     return
+#
+#
+# @default_command.command()
+# def get_all_tasks():
+#     """Вывод всех задач на экран."""
+#     with new_session() as session:
+#         query = select(TaskModel)
+#         result = session.execute(query)
+#         tasks = result.scalars().all()
+#         for task in tasks:
+#             click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+#
+#
+# @default_command.command()
+# @click.argument('task_id')
+# def get_task(task_id):
+#     """
+#     Найти задачу по её id
+#     """
+#     with new_session() as session:
+#         query = select(TaskModel).filter_by(id=task_id)
+#         result = session.execute(query)
+#         task = result.scalars().first()
+#         click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+#
+# @default_command.command()
+# @click.argument('task_name')
+# def create_task(task_name):
+#     """
+#     Создать новую задачу
+#     """
+#     with new_session() as session:
+#         task_field = TaskModel(
+#             task_name=task_name,
+#             task_complete=False
+#         )
+#         session.add(task_field)
+#         session.flush()
+#         session.commit()
+#         click.echo(f'id={task_field.id}, название={task_field.task_name}, статуc={task_field.task_complete}')
+#
+#
+# @default_command.command()
+# @click.argument('task_id')
+# def complete_task(task_id):
+#     """
+#        Обновить статус задачи
+#     """
+#     with new_session() as session:
+#         query = select(TaskModel).filter_by(id=task_id)
+#         result = session.execute(query)
+#         task = result.scalars().first()
+#         task.task_complete = not task.task_complete
+#         session.flush()
+#         session.commit()
+#         click.echo(f'id={task.id}, название={task.task_name}, статуc={task.task_complete}')
+#
+# @default_command.command()
+# @click.argument('task_id')
+# def delete_task(task_id):
+#     """
+#        Удалить задачу
+#     """
+#     with new_session() as session:
+#         query = select(TaskModel).filter_by(id=task_id)
+#         result = session.execute(query)
+#         task = result.scalars().first()
+#         query = delete(TaskModel).filter_by(id=task_id)
+#         if not task:
+#             click.echo('Задача не найдена')
+#             return
+#         session.execute(query)
+#         session.flush()
+#         session.commit()
+#         click.echo("Задача успешно удалена")
+#
+#
+# if __name__ == '__main__':
+#     default_command()
